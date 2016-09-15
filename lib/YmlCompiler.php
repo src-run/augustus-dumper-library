@@ -11,8 +11,10 @@
 
 namespace SR\Compiler;
 
+use Psr\Log\LoggerInterface;
 use SR\Compiler\Exception\CompilerException;
 use SR\File\Lock\FileLock;
+use SR\Log\LoggerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -20,6 +22,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class YmlCompiler implements CompilerInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var null|\DateInterval
      */
@@ -43,10 +47,11 @@ class YmlCompiler implements CompilerInterface
     /**
      * Construct with lifetime of compiled file.
      *
-     * @param \string            $file
-     * @param \DateInterval|null $lifetime
+     * @param \string              $file
+     * @param \DateInterval|null   $lifetime
+     * @param LoggerInterface|null $logger
      */
-    public function __construct($file, \DateInterval $lifetime = null)
+    public function __construct($file, \DateInterval $lifetime = null, LoggerInterface $logger = null)
     {
         $this->inputFile = $file;
         $this->lifetime = $lifetime === null ? new \DateInterval('P1Y') : $lifetime;
@@ -55,6 +60,10 @@ class YmlCompiler implements CompilerInterface
         $baseName = preg_replace('{\.[a-z]+$}i', '', basename($realFile));
 
         $this->outputFile = sys_get_temp_dir().DIRECTORY_SEPARATOR.$baseName.'_'.md5($realFile).'.php';
+
+        if ($logger) {
+            $this->setLogger($logger);
+        }
     }
 
     /**
@@ -103,14 +112,6 @@ class YmlCompiler implements CompilerInterface
     }
 
     /**
-     * @return bool
-     */
-    public function removeCompiled()
-    {
-        return @unlink($this->outputFile);
-    }
-
-    /**
      * @param \DateInterval $dateDiff
      *
      * @return int
@@ -127,6 +128,19 @@ class YmlCompiler implements CompilerInterface
     }
 
     /**
+     * @return bool
+     */
+    public function removeCompiled()
+    {
+        $this->logDebug('Removing compiled file {output} for input file {input}', [
+            'input' => $this->inputFile,
+            'output' => $this->outputFile,
+        ]);
+
+        return @unlink($this->outputFile);
+    }
+
+    /**
      * @throws CompilerException
      */
     private function compileFile()
@@ -139,6 +153,11 @@ class YmlCompiler implements CompilerInterface
         $data = Yaml::parse(file_get_contents($this->inputFile), Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
 
         $this->compileOutputFileWrite($data, $lock);
+
+        $this->logDebug('Wrote compiled file {output} for input file {input}', [
+            'input' => $this->inputFile,
+            'output' => $this->outputFile,
+        ]);
     }
 
     /**
@@ -146,7 +165,11 @@ class YmlCompiler implements CompilerInterface
      */
     private function compileOutputFileLock()
     {
-        $lock = new FileLock($this->outputFile, FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING);
+        $lock = new FileLock(
+            $this->outputFile,
+            FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING,
+            $this->hasLogger() ? $this->getLogger(): null
+        );
         $lock->acquire();
 
         return $lock;

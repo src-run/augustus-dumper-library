@@ -11,6 +11,8 @@
 
 namespace SR\File\Object\Tests\Component\Compiler;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use SR\Compiler\YmlCompiler;
 use Symfony\Component\Yaml\Yaml;
 
@@ -56,6 +58,14 @@ class YmlCompilerTest extends \PHPUnit_Framework_TestCase
 
         $compiler = new YmlCompiler($file);
         $compiler->compile();
+    }
+
+    public function testConstructionWithLogger()
+    {
+        $file = __DIR__.'/Fixtures/array.yml';
+
+        $compiler = new YmlCompiler($file, null, new NullLogger());
+        $this->assertInstanceOf(LoggerInterface::class, $compiler->getLogger());
     }
 }
 

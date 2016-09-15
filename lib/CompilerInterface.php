@@ -11,10 +11,12 @@
 
 namespace SR\Compiler;
 
+use SR\Log\LoggerAwareInterface;
+
 /**
  * Interface for creating temporary compiled PHP files.
  */
-interface CompilerInterface
+interface CompilerInterface extends LoggerAwareInterface
 {
     /**
      * Compile file and return included.
