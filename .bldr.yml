@@ -1,0 +1,16 @@
+api_branch : origin/master
+api_parser : ~
+api_cfgmod : clone
+api_runner : ~
+api_paths  : lib
+env_make   : ~
+env_prep   : get-composer
+env_post   : ci-coveralls,ci-codacy
+php_conf   : timezone
+php_exts   : ~
+app_prep   : dep-composer
+app_post   : ~
+app_path   : ~
+pkg_name   : augustus-compiler-library
+pkg_desc   : "a simple abstraction library to enable compilation of files to native php"
+pkg_bndl   : false
