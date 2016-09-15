@@ -168,7 +168,7 @@ class YmlCompiler implements CompilerInterface
         $lock = new FileLock(
             $this->outputFile,
             FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING,
-            $this->hasLogger() ? $this->getLogger(): null
+            $this->hasLogger() ? $this->getLogger() : null
         );
         $lock->acquire();
 
