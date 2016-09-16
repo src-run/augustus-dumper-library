@@ -22,7 +22,7 @@ class JsonDumper extends AbstractDumper
     /**
      * Parse the input file data to the expected format that should be cached in the output (dumped) file.
      *
-     * @param mixed $data The input file data.
+     * @param mixed $data The input file data
      *
      * @throws CompilationException
      *
