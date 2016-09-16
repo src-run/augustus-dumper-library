@@ -26,21 +26,13 @@ class JsonDumperTest extends AbstractTest
         $dump = new JsonDumper(self::FIXTURE_VALID_JSON, new \DateInterval('PT2S'));
         $dump->remove();
 
-        $filePath = $this
-            ->getDumperReflectionProperty('output')
-            ->getValue($dump);
-
         $this->assertFalse($dump->hasData());
         $this->assertTrue($dump->isStale());
-        $this->assertFileNotExists($filePath);
         $this->assertSame($data, $dump->dump());
         $this->assertSame($data, $dump->getData());
         $this->assertTrue($dump->hasData());
-        $this->assertFileExists($filePath);
-        $this->assertTrue($dump->remove());
-        $this->assertFileNotExists($filePath);
-        $this->assertSame($data, $dump->dump());
         $this->assertFalse($dump->isStale());
+        $this->assertTrue($dump->remove());
 
         sleep(3);
 

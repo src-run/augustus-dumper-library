@@ -68,7 +68,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return mixed
      */
-    protected abstract function parseInputData($data);
+    abstract protected function parseInputData($data);
 
     /**
      * Returns true if an input file or output (dumped) has been read and is non-null.
@@ -196,10 +196,10 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
-     * @throws CompilationException
-     *
      * @param mixed    $data
      * @param FileLock $lock
+     *
+     * @throws CompilationException
      */
     protected function tryWrite($data, FileLock $lock)
     {
@@ -228,7 +228,7 @@ abstract class AbstractDumper implements DumperInterface
     {
         $silencer = new CallSilencer();
         $silencer->setClosure(function () {
-            return include($this->output);
+            return include $this->output;
         });
         $silencer->invoke();
 
@@ -305,6 +305,7 @@ abstract class AbstractDumper implements DumperInterface
             foreach (['y', 'm', 'd', 'h', 'i', 's'] as $f) {
                 $comparable .= str_pad((string) $interval->format('%'.$f), 2, '0', STR_PAD_LEFT);
             }
+
             return (int) $comparable;
         };
 

@@ -24,6 +24,8 @@ class JsonDumper extends AbstractDumper
      *
      * @param mixed $data The input file data.
      *
+     * @throws CompilationException
+     *
      * @return mixed
      */
     protected function parseInputData($data)

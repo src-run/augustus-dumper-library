@@ -1,9 +1,9 @@
 
 # [src-run] augustus-dumper-library
 
-|       Travis-CI        |      Codacy Rating      |      Code Coverage      |        Style-CI         |
-|:----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| [![Travis](https://src.run/augustus-dumper-library/travis.svg)](https://src.run/augustus-dumper-library/travis) | [![Codacy](https://src.run/augustus-dumper-library/codacy.svg)](https://src.run/augustus-dumper-library/codacy) | [![Coveralls](https://src.run/augustus-dumper-library/coveralls.svg)](https://src.run/augustus-dumper-library/coveralls) | [![Coveralls](https://src.run/augustus-dumper-library/styleci.svg)](https://src.run/augustus-dumper-library/styleci) |
+|       Travis-CI        |      Codacy Rating      |      Code Coverage      |        Style-CI         |         Release         |    API Documentation    |
+|:----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
+| [![Travis](https://src.run/augustus-dumper-library/travis.svg)](https://src.run/augustus-dumper-library/travis) | [![Codacy](https://src.run/augustus-dumper-library/codacy.svg)](https://src.run/augustus-dumper-library/codacy) | [![Coveralls](https://src.run/augustus-dumper-library/coveralls.svg)](https://src.run/augustus-dumper-library/coveralls) | [![Coveralls](https://src.run/augustus-dumper-library/styleci.svg)](https://src.run/augustus-dumper-library/styleci) | [![Packagist](https://src.run/augustus-dumper-library/packagist.svg)](https://src.run/augustus-dumper-library/packagist) | [![API Docs](https://src.run/augustus-dumper-library/api.svg)](https://src.run/augustus-dumper-library/api) | 
 
 
 ## Overview
@@ -116,5 +116,4 @@ information.
 | __Stable Release__ | [![Packagist](https://src.run/augustus-dumper-library/packagist.svg)](https://src.run/augustus-dumper-library/packagist)     |
 | __Dev Release__    | [![Packagist](https://src.run/augustus-dumper-library/packagist_pre.svg)](https://src.run/augustus-dumper-library/packagist) |
 | __License__        | [![License](https://src.run/augustus-dumper-library/license.svg)](https://src.run/augustus-dumper-library/license)           |
-| __Reference__      | [![License](https://src.run/augustus-dumper-library/api.svg)](https://src.run/augustus-dumper-library/api)                   |
 

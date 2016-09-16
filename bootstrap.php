@@ -11,7 +11,7 @@
 
 $aliases = [
     'SR\Dumper\YamlDumper' => 'SR\Compiler\YmlCompiler',
-    'SR\Dumper\DumperInterface' => 'SR\Compiler\CompilerInterface'
+    'SR\Dumper\DumperInterface' => 'SR\Compiler\CompilerInterface',
 ];
 
 foreach ($aliases as $activeFqcn => $aliasedFqcn) {
