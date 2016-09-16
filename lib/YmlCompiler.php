@@ -75,10 +75,11 @@ class YmlCompiler implements CompilerInterface
     public function compile()
     {
         if (!$this->isCompiled() || $this->isStale()) {
-            $this->compileFile();
+            $this->removeCompiled();
+            $this->doCompile();
         }
 
-        return $this->data = $this->includeFile();
+        return $this->data = $this->doIncludeFile();
     }
 
     /**
@@ -109,23 +110,7 @@ class YmlCompiler implements CompilerInterface
         $dateTime = new \DateTime();
         $dateDiff = $dateTime->diff(new \DateTime('@'.filemtime($this->outputFile)));
 
-        return $this->intervalToInt($dateDiff) > $this->intervalToInt($this->lifetime);
-    }
-
-    /**
-     * @param \DateInterval $dateDiff
-     *
-     * @return int
-     */
-    private function intervalToInt(\DateInterval $dateDiff)
-    {
-        $dateDiffString = '';
-
-        foreach (['y', 'm', 'd', 'h', 'i', 's'] as $f) {
-            $dateDiffString .= str_pad((string) $dateDiff->format('%'.$f), 2, '0', STR_PAD_LEFT);
-        }
-
-        return (int) $dateDiffString;
+        return $this->getComparableInterval($dateDiff) > $this->getComparableInterval($this->lifetime);
     }
 
     /**
@@ -142,18 +127,34 @@ class YmlCompiler implements CompilerInterface
     }
 
     /**
+     * @param \DateInterval $dateDiff
+     *
+     * @return int
+     */
+    private function getComparableInterval(\DateInterval $dateDiff)
+    {
+        $dateDiffString = '';
+
+        foreach (['y', 'm', 'd', 'h', 'i', 's'] as $f) {
+            $dateDiffString .= str_pad((string) $dateDiff->format('%'.$f), 2, '0', STR_PAD_LEFT);
+        }
+
+        return (int) $dateDiffString;
+    }
+
+    /**
      * @throws CompilerException
      */
-    private function compileFile()
+    private function doCompile()
     {
         if (!file_exists($this->inputFile)) {
             throw new CompilerException('Could not read file "%s"', $this->inputFile);
         }
 
-        $lock = $this->compileOutputFileLock();
+        $lock = $this->doOutputFileLock();
         $data = Yaml::parse(file_get_contents($this->inputFile), Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
 
-        $this->compileOutputFileWrite($data, $lock);
+        $this->doOutputFileWrite($data, $lock);
 
         $this->logDebug('Wrote compiled file {output} for input file {input}', [
             'input' => $this->inputFile,
@@ -164,7 +165,7 @@ class YmlCompiler implements CompilerInterface
     /**
      * @return FileLock
      */
-    private function compileOutputFileLock()
+    private function doOutputFileLock()
     {
         $lock = new FileLock(
             $this->outputFile,
@@ -182,7 +183,7 @@ class YmlCompiler implements CompilerInterface
      *
      * @throws CompilerException
      */
-    private function compileOutputFileWrite($data, FileLock $lock)
+    private function doOutputFileWrite($data, FileLock $lock)
     {
         $silencer = new CallSilencer();
         $silencer->setClosure(function () use ($data, $lock) {
@@ -199,7 +200,7 @@ class YmlCompiler implements CompilerInterface
     /**
      * @return mixed
      */
-    private function includeFile()
+    private function doIncludeFile()
     {
         return include $this->outputFile;
     }
