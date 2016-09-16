@@ -1,15 +1,15 @@
 {
-  "name": "src-run/augustus-compiler-library",
+  "name": "src-run/augustus-dumper-library",
   "license": "MIT",
   "type": "library",
-  "homepage": "https://src.run/augustus-compiler-library/home",
-  "description": "A simple abstraction library to enable compilation of files to native php.",
+  "homepage": "https://src.run/augustus-dumper-library/home",
+  "description": "A simple library to facilitate dumping of files to native php.",
   "support": {
     "email": "rmf@src.run",
-    "source": "https://src.run/augustus-compiler-library/git",
-    "issues": "https://src.run/augustus-compiler-library/issues"
+    "source": "https://src.run/augustus-dumper-library/git",
+    "issues": "https://src.run/augustus-dumper-library/issues"
   },
-  "keywords": [ "augustus-compiler-library", "augustus", "file", "library", "rmf", "src-run" ],
+  "keywords": [ "augustus-dumper-library", "augustus", "file", "library", "rmf", "src-run" ],
   "authors": [
     {
       "name": "Rob Frawley 2nd",
@@ -37,12 +37,15 @@
   },
   "autoload": {
     "psr-4": {
-      "SR\\Compiler\\": "lib"
-    }
+      "SR\\Dumper\\": "lib"
+    },
+    "files" : [
+      "bootstrap.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
-      "SR\\Compiler\\Tests\\": "tests/"
+      "SR\\Dumper\\Tests\\": "tests/"
     }
   },
   "minimum-stability": "dev",

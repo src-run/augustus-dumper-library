@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the `src-run/augustus-compiler-library` project.
+ * This file is part of the `src-run/augustus-dumper-library` project.
  *
  * (c) Rob Frawley 2nd <rmf@src.run>
  *
@@ -14,7 +14,7 @@ use SLLH\StyleCIBridge\ConfigBridge;
 require_once __DIR__.'/vendor/autoload.php';
 
 $headerString = <<<EOF
-This file is part of the `src-run/augustus-compiler-library` project.
+This file is part of the `src-run/augustus-dumper-library` project.
 
 (c) Rob Frawley 2nd <rmf@src.run>
 

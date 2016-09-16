@@ -11,7 +11,7 @@
          bootstrap="./vendor/autoload.php">
 
     <testsuites>
-        <testsuite name="src-run/augustus-compiler-library">
+        <testsuite name="src-run/augustus-dumper-library">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

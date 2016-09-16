@@ -1,25 +1,25 @@
 
-# [src-run] augustus-compiler-library
+# [src-run] augustus-dumper-library
 
 |       Travis-CI        |      Codacy Rating      |      Code Coverage      |        Style-CI         |
 |:----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| [![Travis](https://src.run/augustus-compiler-library/travis.svg)](https://src.run/augustus-compiler-library/travis) | [![Codacy](https://src.run/augustus-compiler-library/codacy.svg)](https://src.run/augustus-compiler-library/codacy) | [![Coveralls](https://src.run/augustus-compiler-library/coveralls.svg)](https://src.run/augustus-compiler-library/coveralls) | [![Coveralls](https://src.run/augustus-compiler-library/styleci.svg)](https://src.run/augustus-compiler-library/styleci) |
+| [![Travis](https://src.run/augustus-dumper-library/travis.svg)](https://src.run/augustus-dumper-library/travis) | [![Codacy](https://src.run/augustus-dumper-library/codacy.svg)](https://src.run/augustus-dumper-library/codacy) | [![Coveralls](https://src.run/augustus-dumper-library/coveralls.svg)](https://src.run/augustus-dumper-library/coveralls) | [![Coveralls](https://src.run/augustus-dumper-library/styleci.svg)](https://src.run/augustus-dumper-library/styleci) |
 
 
 ## Overview
 
 [Welcome](https://src.run/go/readme_welcome)!
-The `src-run/augustus-compiler-library` package provides the following
+The `src-run/augustus-dumper-library` package provides the following
 
-> A simple abstraction library to enable compilation of files to native php.
+> A simple library to facilitate dumping of files to native php.
 
 ### Grouping
 
 We use a Willy Wonka-inspired naming schema for our package group names. This package is part of the
-[augustus group](https://src.run/augustus-compiler-library/group), which is a collection of packages with a focus
+[augustus group](https://src.run/augustus-dumper-library/group), which is a collection of packages with a focus
 on "core reflection base classes" and related functionality.
 
-You are welcome to research some [useless details](https://src.run/augustus-compiler-library/group_explanation)
+You are welcome to research some [useless details](https://src.run/augustus-dumper-library/group_explanation)
 about this specific group if you have too much time on your hands.
 
 ### JTT
@@ -29,7 +29,7 @@ released under the "SR" namespace, comprised of many framework-agnostic librarie
 well as some one-off releases. This project is authored and maintained by:
 
 - [Rob Frawley 2nd](https://src.run/rmf)
-- [Collaborators](https://src.run/augustus-compiler-library/github_collaborators)
+- [Collaborators](https://src.run/augustus-dumper-library/github_collaborators)
 
 
 ## Quick Start
@@ -41,14 +41,14 @@ Get the code by requiring it explicitly via the [Composer](https://getcomposer.c
 this project using the CLI, use the following command.
 
 ```bash
-$ composer require src-run/augustus-compiler-library
+$ composer require src-run/augustus-dumper-library
 ```
 
 Alternatively, to add this project to your "composer.json" file, add the following to the "require" section.
 
 ```json
 require: {
-	"src-run/augustus-compiler-library": "dev-master"
+	"src-run/augustus-dumper-library": "dev-master"
 }
 ```
 
@@ -90,7 +90,7 @@ discuss language-level ideas, possible new directions for a project, emerging te
 
 ### Issues
 
-To report issues or request a new feature, use the [project issue tracker](https://src.run/augustus-compiler-library/github_issues).
+To report issues or request a new feature, use the [project issue tracker](https://src.run/augustus-dumper-library/github_issues).
 Include as much information as possible in any bug reports. Feel free to "ping" the topic if you don't get a response
 within a few days (sometimes Github notification e-mails fall through the cracks).
 
@@ -98,14 +98,14 @@ within a few days (sometimes Github notification e-mails fall through the cracks
 
 You created additional functionality while utilizing this package? Wonderful: send it back upstream! *Don't hesitate to
 submit a pull request!* Your [imagination](https://src.run/go/readme_imagination) and the requirements outlined within
-our [CONTRIBUTING.md](https://src.run/augustus-compiler-library/contributing) file are the only limitations.
+our [CONTRIBUTING.md](https://src.run/augustus-dumper-library/contributing) file are the only limitations.
 
 
 ## License
 
 This project is licensed under the [MIT License](https://src.run/go/mit), an [FSF](https://src.run/go/fsf)- and 
 [OSI](https://src.run/go/osi)-approved, [GPL](https://src.run/go/gpl)-compatible, permissive free software license.
-Review the [LICENSE](https://src.run/augustus-compiler-library/license) file distributed with this source code for additional
+Review the [LICENSE](https://src.run/augustus-dumper-library/license) file distributed with this source code for additional
 information.
 
 
@@ -113,8 +113,8 @@ information.
 
 | Item               | Result/Status                                                                                                      |
 |-------------------:|:-------------------------------------------------------------------------------------------------------------------|
-| __Stable Release__ | [![Packagist](https://src.run/augustus-compiler-library/packagist.svg)](https://src.run/augustus-compiler-library/packagist)     |
-| __Dev Release__    | [![Packagist](https://src.run/augustus-compiler-library/packagist_pre.svg)](https://src.run/augustus-compiler-library/packagist) |
-| __License__        | [![License](https://src.run/augustus-compiler-library/license.svg)](https://src.run/augustus-compiler-library/license)           |
-| __Reference__      | [![License](https://src.run/augustus-compiler-library/api.svg)](https://src.run/augustus-compiler-library/api)                   |
+| __Stable Release__ | [![Packagist](https://src.run/augustus-dumper-library/packagist.svg)](https://src.run/augustus-dumper-library/packagist)     |
+| __Dev Release__    | [![Packagist](https://src.run/augustus-dumper-library/packagist_pre.svg)](https://src.run/augustus-dumper-library/packagist) |
+| __License__        | [![License](https://src.run/augustus-dumper-library/license.svg)](https://src.run/augustus-dumper-library/license)           |
+| __Reference__      | [![License](https://src.run/augustus-dumper-library/api.svg)](https://src.run/augustus-dumper-library/api)                   |
 
