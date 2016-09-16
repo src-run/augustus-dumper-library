@@ -21,29 +21,37 @@ interface CompilerInterface extends LoggerAwareInterface
     /**
      * Compile file and return included.
      *
-     * @return mixed
+     * @return mixed|false
      */
     public function compile();
 
     /**
-     * @return mixed
-     */
-    public function getData();
-
-    /**
+     * Check if input file is compiled.
+     *
      * @return bool
      */
     public function isCompiled();
 
     /**
+     * Check if output file is stale.
+     *
      * @return bool
      */
     public function isStale();
 
     /**
+     * Remove compiled output file.
+     *
      * @return bool
      */
     public function removeCompiled();
+
+    /**
+     * Get output file include data.
+     *
+     * @return mixed
+     */
+    public function getData();
 }
 
 /* EOF */

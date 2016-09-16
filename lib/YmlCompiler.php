@@ -15,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use SR\Compiler\Exception\CompilerException;
 use SR\File\Lock\FileLock;
 use SR\Log\LoggerAwareTrait;
+use SR\Silencer\CallSilencer;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -183,13 +184,13 @@ class YmlCompiler implements CompilerInterface
      */
     private function compileOutputFileWrite($data, FileLock $lock)
     {
-        $previousErrorLevel = error_reporting(0);
-        $result = fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
-        error_reporting($previousErrorLevel);
+        $silencer = new CallSilencer();
+        $silencer->setClosure(function () use ($data, $lock) {
+            return fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
+        })->invoke();
 
-        if (false === $result) {
-            $error = error_get_last();
-            throw new CompilerException('Could not write compiled file contents "%s"', $error['message']);
+        if ($silencer->isResultFalse() || $silencer->hasError()) {
+            throw new CompilerException('Could not write compiled file "%s"', $silencer->getError(CallSilencer::ERROR_MESSAGE));
         }
 
         $lock->release();
