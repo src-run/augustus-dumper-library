@@ -70,5 +70,3 @@ interface DumperInterface extends LoggerAwareInterface
      */
     public function dump();
 }
-
-/* EOF */

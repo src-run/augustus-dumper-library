@@ -19,5 +19,3 @@ use SR\Exception\Exception as BaseException;
 class Exception extends BaseException
 {
 }
-
-/* EOF */

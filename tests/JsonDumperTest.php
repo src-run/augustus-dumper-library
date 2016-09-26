@@ -51,5 +51,3 @@ class JsonDumperTest extends AbstractTest
         $dump->dump();
     }
 }
-
-/* EOF */

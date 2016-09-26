@@ -63,7 +63,7 @@ class AbstractDumperTest extends AbstractTest
     public function testThrowsExceptionOnFileOutputErrorOnWrite()
     {
         $data = Yaml::parse(file_get_contents(self::FIXTURE_VALID_YAML));
-        $lock = new FileLock(self::FIXTURE_VALID_YAML);
+        $lock = FileLock::create(self::FIXTURE_VALID_YAML);
         $dump = new YamlDumper(self::FIXTURE_VALID_YAML);
 
         $this->expectException(CompilationException::class);
@@ -95,5 +95,3 @@ class AbstractDumperTest extends AbstractTest
         $method->invoke($dump);
     }
 }
-
-/* EOF */

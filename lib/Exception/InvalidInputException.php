@@ -17,5 +17,3 @@ namespace SR\Dumper\Exception;
 class InvalidInputException extends Exception
 {
 }
-
-/* EOF */

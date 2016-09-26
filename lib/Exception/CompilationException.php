@@ -17,5 +17,3 @@ namespace SR\Dumper\Exception;
 class CompilationException extends Exception
 {
 }
-
-/* EOF */

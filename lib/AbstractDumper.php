@@ -17,7 +17,7 @@ use SR\Dumper\Exception\InvalidInputException;
 use SR\Dumper\Exception\InvalidOutputException;
 use SR\File\Lock\FileLock;
 use SR\Log\LoggerAwareTrait;
-use SR\Silencer\CallSilencer;
+use SR\Silencer\CallSilencerFactory;
 
 /**
  * Implementation for creating dumped PHP files from various initial formats.
@@ -97,13 +97,13 @@ abstract class AbstractDumper implements DumperInterface
      */
     public function remove()
     {
-        $silencer = new CallSilencer();
-        $silencer->setClosure(function () {
+        $return = CallSilencerFactory::create(function () {
             return unlink($this->output);
-        });
-        $silencer->invoke();
+        }, function ($result, $error = null) {
+            return $result === true && (null === $error || count($error) === 0);
+        })->invoke();
 
-        if (!$silencer->isResultTrue() || $silencer->hasError()) {
+        if (!$return->isValid()) {
             return false;
         }
 
@@ -189,7 +189,8 @@ abstract class AbstractDumper implements DumperInterface
      */
     protected function tryLock()
     {
-        $lock = new FileLock($this->output, FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING, $this->getLogger());
+        $lock = FileLock::create($this->output, FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING);
+        $lock->setLogger($this->logger);
         $lock->acquire();
 
         return $lock;
@@ -203,19 +204,18 @@ abstract class AbstractDumper implements DumperInterface
      */
     protected function tryWrite($data, FileLock $lock)
     {
-        $silencer = new CallSilencer();
-        $silencer->setClosure(function () use ($data, $lock) {
+        $return = CallSilencerFactory::create(function () use ($data, $lock) {
             return fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
-        });
-        $silencer->setValidator(function ($return) {
+        }, function ($return) {
             return $return !== false;
-        });
-        $silencer->invoke();
+        })->invoke();
 
-        if (!$silencer->isResultValid() || $silencer->hasError()) {
-            $this->logDebug('Could not write dumped output file: %s', $silencer->getError());
+        if (!$return->isValid() || $return->hasError()) {
+            $this->logDebug('Could not write dumped output file: {file}', [
+                'file' => $return->getErrorMessage(),
+            ]);
 
-            throw new CompilationException('Could not write dumped output file: %s', $silencer->getError());
+            throw new CompilationException('Could not write dumped output file: %s', $return->getErrorMessage());
         }
     }
 
@@ -226,17 +226,15 @@ abstract class AbstractDumper implements DumperInterface
      */
     protected function tryInclude()
     {
-        $silencer = new CallSilencer();
-        $silencer->setClosure(function () {
+        $return = CallSilencerFactory::create(function () {
             return include $this->output;
-        });
-        $silencer->invoke();
+        })->invoke();
 
-        if ($silencer->isResultFalse() || $silencer->hasError()) {
-            throw new InvalidOutputException('Could not include dumped output file: %s', $silencer->getError());
+        if ($return->isFalse() || $return->hasError()) {
+            throw new InvalidOutputException('Could not include dumped output file: %s', $return->getErrorMessage());
         }
 
-        return $silencer->getResult();
+        return $return->getReturn();
     }
 
     /**
@@ -246,20 +244,17 @@ abstract class AbstractDumper implements DumperInterface
      */
     protected function tryRead()
     {
-        $silencer = new CallSilencer();
-        $silencer->setClosure(function () {
+        $return = CallSilencerFactory::create(function () {
             return file_get_contents($this->input);
-        });
-        $silencer->setValidator(function ($return) {
+        }, function ($return) {
             return is_string($return);
-        });
-        $silencer->invoke();
+        })->invoke();
 
-        if (!$silencer->isResultValid() || $silencer->hasError()) {
-            throw new InvalidInputException('Could not read input file: %s', $silencer->getError(CallSilencer::ERROR_MESSAGE));
+        if (!$return->isValid() || $return->hasError()) {
+            throw new InvalidInputException('Could not read input file: %s', $return->getErrorMessage());
         }
 
-        return $silencer->getResult();
+        return $return->getReturn();
     }
 
     /**
@@ -312,5 +307,3 @@ abstract class AbstractDumper implements DumperInterface
         return $toComparable($outputInterval) > $toComparable($this->lifetime);
     }
 }
-
-/* EOF */

@@ -38,5 +38,3 @@ class YamlDumper extends AbstractDumper
         }
     }
 }
-
-/* EOF */

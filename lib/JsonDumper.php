@@ -12,7 +12,7 @@
 namespace SR\Dumper;
 
 use SR\Dumper\Exception\CompilationException;
-use SR\Silencer\CallSilencer;
+use SR\Silencer\CallSilencerFactory;
 
 /**
  * Implementation for creating dumped PHP files from JSON file formats.
@@ -30,21 +30,16 @@ class JsonDumper extends AbstractDumper
      */
     protected function parseInputData($data)
     {
-        $silencer = new CallSilencer();
-        $silencer->setClosure(function () use ($data) {
+        $return = CallSilencerFactory::create(function () use ($data) {
             return json_decode($data, true);
-        });
-        $silencer->setValidator(function ($return) {
+        }, function ($return) {
             return $return !== null;
-        });
-        $silencer->invoke();
+        })->invoke();
 
-        if (!$silencer->isResultValid() || $silencer->hasError()) {
+        if (!$return->isValid() || $return->hasError()) {
             throw new CompilationException('Could not parse input file data as JSON %s', $this->input);
         }
 
-        return $silencer->getResult();
+        return $return->getReturn();
     }
 }
-
-/* EOF */

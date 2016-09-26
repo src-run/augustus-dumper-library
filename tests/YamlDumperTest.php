@@ -60,5 +60,3 @@ class YamlDumperTest extends AbstractTest
         $dump->dump();
     }
 }
-
-/* EOF */
