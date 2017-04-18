@@ -15,7 +15,9 @@ use Psr\Log\LoggerInterface;
 use SR\Dumper\Exception\CompilationException;
 use SR\Dumper\Exception\InvalidInputException;
 use SR\Dumper\Exception\InvalidOutputException;
+use SR\Dumper\Model\ResultModel;
 use SR\File\Lock\FileLock;
+use SR\File\Lock\FileLockInterface;
 use SR\Log\LoggerAwareTrait;
 use SR\Silencer\CallSilencerFactory;
 
@@ -42,6 +44,11 @@ abstract class AbstractDumper implements DumperInterface
     protected $output;
 
     /**
+     * @var string
+     */
+    protected $outputBasePath;
+
+    /**
      * @var null|\DateInterval
      */
     protected $lifetime;
@@ -49,33 +56,42 @@ abstract class AbstractDumper implements DumperInterface
     /**
      * Construct dumper instance, given a file path and optional lifetime date interval and logger interface.
      *
-     * @param \string              $file     The input file to dump
+     * @param string               $file     The input file to dump
      * @param \DateInterval|null   $lifetime The output file fresh lifetime
      * @param LoggerInterface|null $logger   An optional logger instance
      */
-    public function __construct($file, \DateInterval $lifetime = null, LoggerInterface $logger = null)
+    public function __construct(string $file, \DateInterval $lifetime = null, LoggerInterface $logger = null)
     {
         $this->setLogger($logger);
-        $this->setOutputLifetime($lifetime);
-        $this->setInputFileName($file);
-        $this->setOutputFileName($file);
+        $this->setupLifetime($lifetime);
+        $this->setupInput($file);
+        $this->setupOutput($file);
+    }
+
+    /**
+     * @param string|null $outputBasePath
+     */
+    public function setOutputBasePath(string $outputBasePath = null)
+    {
+        $this->outputBasePath = $outputBasePath;
+        $this->setupOutput($this->input);
     }
 
     /**
      * Parse the input file data to the expected format that should be cached in the output (dumped) file.
      *
-     * @param mixed $data A data string read from the input file
+     * @param string $data A data string read from the input file
      *
-     * @return mixed
+     * @return ResultModel
      */
-    abstract protected function parseInputData($data);
+    abstract protected function parseInputData(string $data): ResultModel;
 
     /**
      * Returns true if an input file or output (dumped) has been read and is non-null.
      *
      * @return bool
      */
-    public function hasData()
+    public function hasData(): bool
     {
         return $this->data !== null;
     }
@@ -83,9 +99,9 @@ abstract class AbstractDumper implements DumperInterface
     /**
      * Returns the data originally read from the input file and dumped to the output (dumped) file.
      *
-     * @return mixed
+     * @return ResultModel
      */
-    public function getData()
+    public function getData(): ResultModel
     {
         return $this->data;
     }
@@ -95,7 +111,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return bool
      */
-    public function remove()
+    public function remove(): bool
     {
         $return = CallSilencerFactory::create(function () {
             return unlink($this->output);
@@ -120,7 +136,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return bool
      */
-    public function isDumped()
+    public function isDumped(): bool
     {
         return file_exists($this->output);
     }
@@ -130,7 +146,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return bool
      */
-    public function isStale()
+    public function isStale(): bool
     {
         if (!file_exists($this->output)) {
             return true;
@@ -149,9 +165,9 @@ abstract class AbstractDumper implements DumperInterface
      * @throws InvalidOutputException If an error occurs with the output file
      * @throws CompilationException   If dump compilation fails
      *
-     * @return mixed
+     * @return ResultModel
      */
-    public function dump()
+    public function dump(): ResultModel
     {
         if (!$this->isDumped() || $this->isStale()) {
             $this->remove();
@@ -168,9 +184,9 @@ abstract class AbstractDumper implements DumperInterface
      * @throws InvalidOutputException
      * @throws CompilationException
      *
-     * @return $this
+     * @return self
      */
-    protected function tryDump()
+    protected function tryDump(): self
     {
         $data = $this->parseInputData($this->tryRead());
         $lock = $this->tryLock();
@@ -185,9 +201,9 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
-     * @return FileLock
+     * @return FileLockInterface
      */
-    protected function tryLock()
+    protected function tryLock(): FileLockInterface
     {
         $lock = FileLock::create($this->output, FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING);
         $lock->setLogger($this->logger);
@@ -197,12 +213,12 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
-     * @param mixed    $data
-     * @param FileLock $lock
+     * @param ResultModel       $data
+     * @param FileLockInterface $lock
      *
      * @throws CompilationException
      */
-    protected function tryWrite($data, FileLock $lock)
+    protected function tryWrite(ResultModel $data, FileLockInterface $lock)
     {
         $return = CallSilencerFactory::create(function () use ($data, $lock) {
             return fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
@@ -222,9 +238,9 @@ abstract class AbstractDumper implements DumperInterface
     /**
      * @throws InvalidOutputException
      *
-     * @return mixed
+     * @return ResultModel
      */
-    protected function tryInclude()
+    protected function tryInclude(): ResultModel
     {
         $return = CallSilencerFactory::create(function () {
             return include $this->output;
@@ -242,7 +258,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return string
      */
-    protected function tryRead()
+    protected function tryRead(): string
     {
         $return = CallSilencerFactory::create(function () {
             return file_get_contents($this->input);
@@ -260,15 +276,15 @@ abstract class AbstractDumper implements DumperInterface
     /**
      * @param string $file
      */
-    protected function setInputFileName($file)
+    protected function setupInput(string $file)
     {
-        $this->input = realpath($file);
+        $this->input = $file;
     }
 
     /**
      * @param \DateInterval|null $lifetime
      */
-    protected function setOutputLifetime(\DateInterval $lifetime = null)
+    protected function setupLifetime(\DateInterval $lifetime = null)
     {
         if (!$lifetime) {
             $lifetime = new \DateInterval('P1Y');
@@ -280,12 +296,19 @@ abstract class AbstractDumper implements DumperInterface
     /**
      * @param string $file
      */
-    protected function setOutputFileName($file)
+    protected function setupOutput(string $file)
     {
-        $realPath = realpath($file);
-        $baseName = preg_replace('{\.[a-z]+$}i', '', basename($realPath));
+        $this->output = vsprintf('%s%s_dumped-%s_%s_%s.php', [
+            $this->outputBasePath ?: sys_get_temp_dir(),
+            DIRECTORY_SEPARATOR,
+            pathinfo($file, PATHINFO_EXTENSION),
+            hash('sha256', $file),
+            pathinfo(realpath($file), PATHINFO_FILENAME),
+        ]);
 
-        $this->output = sys_get_temp_dir().DIRECTORY_SEPARATOR.$baseName.'_'.md5($file).'.php';
+        if (!is_dir($path = pathinfo($this->output, PATHINFO_DIRNAME))) {
+            mkdir($path, 0777, true);
+        }
     }
 
     /**
@@ -293,7 +316,7 @@ abstract class AbstractDumper implements DumperInterface
      *
      * @return bool
      */
-    protected function isGreaterThanLifetime(\DateInterval $outputInterval)
+    protected function isGreaterThanLifetime(\DateInterval $outputInterval): bool
     {
         $toComparable = function (\DateInterval $interval) {
             $comparable = '';

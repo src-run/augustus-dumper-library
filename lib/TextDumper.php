@@ -11,33 +11,20 @@
 
 namespace SR\Dumper;
 
-use SR\Dumper\Exception\CompilationException;
 use SR\Dumper\Model\ResultModel;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implementation for creating dumped PHP files from YAML file formats.
  */
-class YamlDumper extends AbstractDumper
+class TextDumper extends AbstractDumper
 {
     /**
-     * Parse the input file data to the expected format that should be cached in the output (dumped) file.
-     *
      * @param string $data The input file data
-     *
-     * @throws CompilationException
      *
      * @return ResultModel
      */
     protected function parseInputData(string $data): ResultModel
     {
-        try {
-            $data = Yaml::parse($data, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
-        } catch (ParseException $e) {
-            throw new CompilationException('Could not parse input file data as YAML %s', $this->input);
-        }
-
         return new ResultModel($data);
     }
 }

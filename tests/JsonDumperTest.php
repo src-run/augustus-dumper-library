@@ -13,6 +13,7 @@ namespace SR\Dumper\Tests;
 
 use SR\Dumper\Exception\CompilationException;
 use SR\Dumper\JsonDumper;
+use SR\Dumper\Model\ResultModel;
 
 /**
  * @covers \SR\Dumper\JsonDumper
@@ -21,22 +22,19 @@ class JsonDumperTest extends AbstractTest
 {
     public function testCompilation()
     {
-        $data = json_decode(file_get_contents(self::FIXTURE_VALID_JSON), true);
+        $data = new ResultModel(json_decode(file_get_contents(self::FIXTURE_VALID_JSON), true));
 
         $dump = new JsonDumper(self::FIXTURE_VALID_JSON, new \DateInterval('PT2S'));
         $dump->remove();
 
         $this->assertFalse($dump->hasData());
         $this->assertTrue($dump->isStale());
-        $this->assertSame($data, $dump->dump());
-        $this->assertSame($data, $dump->getData());
+        $this->assertEquals($data, $dump->dump());
+        $this->assertEquals($data, $dump->getData());
         $this->assertTrue($dump->hasData());
+        $this->assertTrue($dump->getData()->isArray());
         $this->assertFalse($dump->isStale());
         $this->assertTrue($dump->remove());
-
-        sleep(3);
-
-        $this->assertTrue($dump->isStale());
         $dump->remove();
     }
 

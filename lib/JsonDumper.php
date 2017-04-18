@@ -12,6 +12,7 @@
 namespace SR\Dumper;
 
 use SR\Dumper\Exception\CompilationException;
+use SR\Dumper\Model\ResultModel;
 use SR\Silencer\CallSilencerFactory;
 
 /**
@@ -22,13 +23,13 @@ class JsonDumper extends AbstractDumper
     /**
      * Parse the input file data to the expected format that should be cached in the output (dumped) file.
      *
-     * @param mixed $data The input file data
+     * @param string $data The input file data
      *
      * @throws CompilationException
      *
-     * @return mixed
+     * @return ResultModel
      */
-    protected function parseInputData($data)
+    protected function parseInputData(string $data): ResultModel
     {
         $return = CallSilencerFactory::create(function () use ($data) {
             return json_decode($data, true);
@@ -40,6 +41,6 @@ class JsonDumper extends AbstractDumper
             throw new CompilationException('Could not parse input file data as JSON %s', $this->input);
         }
 
-        return $return->getReturn();
+        return new ResultModel($return->getReturn());
     }
 }

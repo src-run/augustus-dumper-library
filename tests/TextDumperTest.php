@@ -17,15 +17,15 @@ use SR\Dumper\YamlDumper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @covers \SR\Dumper\YamlDumper
+ * @covers \SR\Dumper\TextDumper
  */
-class YamlDumperTest extends AbstractTest
+class TextDumperTest extends AbstractTest
 {
     public function testCompilation()
     {
-        $data = new ResultModel(Yaml::parse(file_get_contents(self::FIXTURE_VALID_YAML)));
+        $data = new ResultModel(file_get_contents(self::FIXTURE_VALID_TEXT));
 
-        $dump = new YamlDumper(self::FIXTURE_VALID_YAML, new \DateInterval('PT2S'));
+        $dump = new YamlDumper(self::FIXTURE_VALID_TEXT, new \DateInterval('PT2S'));
         $dump->remove();
 
         $filePath = $this
@@ -38,27 +38,12 @@ class YamlDumperTest extends AbstractTest
         $this->assertEquals($data, $dump->dump());
         $this->assertEquals($data, $dump->getData());
         $this->assertTrue($dump->hasData());
-        $this->assertTrue($dump->getData()->isArray());
+        $this->assertTrue($dump->getData()->isString());
         $this->assertFileExists($filePath);
         $this->assertTrue($dump->remove());
         $this->assertFileNotExists($filePath);
         $this->assertEquals($data, $dump->dump());
         $this->assertFalse($dump->isStale());
-
-        sleep(3);
-
-        $this->assertTrue($dump->isStale());
         $dump->remove();
-    }
-
-    public function testThrowsExceptionOnInvalidYaml()
-    {
-        $dump = new YamlDumper(self::FIXTURE_INVALID_YAML, new \DateInterval('PT2S'));
-        $dump->remove();
-
-        $this->expectException(CompilationException::class);
-        $this->expectExceptionMessage('Could not parse input file data as YAML');
-
-        $dump->dump();
     }
 }
