@@ -11,8 +11,6 @@
 
 namespace SR\Dumper\Model;
 
-use SR\Exception\Logic\InvalidArgumentException;
-
 class ResultModel implements \Countable, \IteratorAggregate
 {
     /**
@@ -33,13 +31,9 @@ class ResultModel implements \Countable, \IteratorAggregate
      *
      * @return self
      */
-    static public function __set_state(array $properties): self
+    public static function __set_state(array $properties): self
     {
-        if (!isset($properties['data'])) {
-            throw new InvalidArgumentException('Data property required to reset object state');
-        }
-
-        return new static($properties['data']);
+        return new static($properties['data'] ?? []);
     }
 
     /**
@@ -63,7 +57,7 @@ class ResultModel implements \Countable, \IteratorAggregate
      */
     public function count(): int
     {
-        return count($this->data);
+        return $this->isArray() ? count($this->data) : mb_strlen($this->data);
     }
 
     /**

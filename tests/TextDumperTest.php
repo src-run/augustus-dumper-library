@@ -11,13 +11,13 @@
 
 namespace SR\Dumper\Tests;
 
-use SR\Dumper\Exception\CompilationException;
 use SR\Dumper\Model\ResultModel;
-use SR\Dumper\YamlDumper;
-use Symfony\Component\Yaml\Yaml;
+use SR\Dumper\TextDumper;
 
 /**
+ * @covers \SR\Dumper\AbstractDumper
  * @covers \SR\Dumper\TextDumper
+ * @covers \SR\Dumper\Model\ResultModel
  */
 class TextDumperTest extends AbstractTest
 {
@@ -25,25 +25,22 @@ class TextDumperTest extends AbstractTest
     {
         $data = new ResultModel(file_get_contents(self::FIXTURE_VALID_TEXT));
 
-        $dump = new YamlDumper(self::FIXTURE_VALID_TEXT, new \DateInterval('PT2S'));
+        $dump = new TextDumper(self::FIXTURE_VALID_TEXT, new \DateInterval('PT2S'));
         $dump->remove();
-
-        $filePath = $this
-            ->getDumperReflectionProperty('output')
-            ->getValue($dump);
 
         $this->assertFalse($dump->hasData());
         $this->assertTrue($dump->isStale());
-        $this->assertFileNotExists($filePath);
-        $this->assertEquals($data, $dump->dump());
-        $this->assertEquals($data, $dump->getData());
+        $this->assertSame($data->getData(), $dump->dump()->getData());
         $this->assertTrue($dump->hasData());
+        $this->assertFalse($dump->getData()->isArray());
         $this->assertTrue($dump->getData()->isString());
-        $this->assertFileExists($filePath);
-        $this->assertTrue($dump->remove());
-        $this->assertFileNotExists($filePath);
-        $this->assertEquals($data, $dump->dump());
+        $this->assertSame(mb_strlen(file_get_contents(self::FIXTURE_VALID_TEXT)), $dump->getData()->count());
+        $this->assertInstanceOf(\ArrayIterator::class, $dump->getData()->getIterator());
+        $this->assertInstanceOf(ResultModel::class, $dump->getData());
+        $this->assertInternalType('string', $dump->getData()->getData());
         $this->assertFalse($dump->isStale());
+        $this->assertTrue($dump->remove());
+
         $dump->remove();
     }
 }

@@ -48,7 +48,7 @@ interface DumperInterface extends LoggerAwareInterface
      *
      * @return ResultModel
      */
-    public function dump() : ResultModel;
+    public function dump(): ResultModel;
 
     /**
      * @param string|null $outputBasePath

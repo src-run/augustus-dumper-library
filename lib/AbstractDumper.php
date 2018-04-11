@@ -78,22 +78,13 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
-     * Parse the input file data to the expected format that should be cached in the output (dumped) file.
-     *
-     * @param string $data A data string read from the input file
-     *
-     * @return ResultModel
-     */
-    abstract protected function parseInputData(string $data): ResultModel;
-
-    /**
      * Returns true if an input file or output (dumped) has been read and is non-null.
      *
      * @return bool
      */
     public function hasData(): bool
     {
-        return $this->data !== null;
+        return null !== $this->data;
     }
 
     /**
@@ -116,7 +107,7 @@ abstract class AbstractDumper implements DumperInterface
         $return = CallSilencerFactory::create(function () {
             return unlink($this->output);
         }, function ($result, $error = null) {
-            return $result === true && (null === $error || count($error) === 0);
+            return true === $result && (null === $error || 0 === count($error));
         })->invoke();
 
         if (!$return->isValid()) {
@@ -180,6 +171,15 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
+     * Parse the input file data to the expected format that should be cached in the output (dumped) file.
+     *
+     * @param string $data A data string read from the input file
+     *
+     * @return ResultModel
+     */
+    abstract protected function parseInputData(string $data): ResultModel;
+
+    /**
      * @throws InvalidInputException
      * @throws InvalidOutputException
      * @throws CompilationException
@@ -223,7 +223,7 @@ abstract class AbstractDumper implements DumperInterface
         $return = CallSilencerFactory::create(function () use ($data, $lock) {
             return fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
         }, function ($return) {
-            return $return !== false;
+            return false !== $return;
         })->invoke();
 
         if (!$return->isValid() || $return->hasError()) {

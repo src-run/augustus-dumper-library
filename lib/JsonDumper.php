@@ -34,7 +34,7 @@ class JsonDumper extends AbstractDumper
         $return = CallSilencerFactory::create(function () use ($data) {
             return json_decode($data, true);
         }, function ($return) {
-            return $return !== null;
+            return null !== $return;
         })->invoke();
 
         if (!$return->isValid() || $return->hasError()) {

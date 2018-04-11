@@ -11,12 +11,13 @@
 
 namespace SR\Dumper\Tests;
 
+use PHPUnit\Framework\TestCase;
 use SR\Dumper\YamlDumper;
 
 /**
  * Abstract test case instance for dumper tests.
  */
-abstract class AbstractTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTest extends TestCase
 {
     const FIXTURE_VALID_YAML = __DIR__.'/Fixtures/test-array-valid.yml';
     const FIXTURE_VALID_JSON = __DIR__.'/Fixtures/test-array-valid.json';

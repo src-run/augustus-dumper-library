@@ -17,7 +17,9 @@ use SR\Dumper\YamlDumper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @covers \SR\Dumper\AbstractDumper
  * @covers \SR\Dumper\YamlDumper
+ * @covers \SR\Dumper\Model\ResultModel
  */
 class YamlDumperTest extends AbstractTest
 {
@@ -35,14 +37,18 @@ class YamlDumperTest extends AbstractTest
         $this->assertFalse($dump->hasData());
         $this->assertTrue($dump->isStale());
         $this->assertFileNotExists($filePath);
-        $this->assertEquals($data, $dump->dump());
-        $this->assertEquals($data, $dump->getData());
+        $this->assertSame($data->getData(), $dump->dump()->getData());
         $this->assertTrue($dump->hasData());
         $this->assertTrue($dump->getData()->isArray());
+        $this->assertFalse($dump->getData()->isString());
+        $this->assertSame(count(Yaml::parse(file_get_contents(self::FIXTURE_VALID_YAML))), $dump->getData()->count());
+        $this->assertInstanceOf(\ArrayIterator::class, $dump->getData()->getIterator());
+        $this->assertInstanceOf(ResultModel::class, $dump->getData());
+        $this->assertInternalType('array', $dump->getData()->getData());
         $this->assertFileExists($filePath);
         $this->assertTrue($dump->remove());
         $this->assertFileNotExists($filePath);
-        $this->assertEquals($data, $dump->dump());
+        $this->assertSame($data->getData(), $dump->dump()->getData());
         $this->assertFalse($dump->isStale());
 
         sleep(3);
