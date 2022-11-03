@@ -26,8 +26,6 @@ class JsonDumper extends AbstractDumper
      * @param string $data The input file data
      *
      * @throws CompilationException
-     *
-     * @return ResultModel
      */
     protected function parseInputData(string $data): ResultModel
     {

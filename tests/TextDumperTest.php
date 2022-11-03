@@ -37,7 +37,7 @@ class TextDumperTest extends AbstractTest
         $this->assertSame(mb_strlen(file_get_contents(self::FIXTURE_VALID_TEXT)), $dump->getData()->count());
         $this->assertInstanceOf(\ArrayIterator::class, $dump->getData()->getIterator());
         $this->assertInstanceOf(ResultModel::class, $dump->getData());
-        $this->assertInternalType('string', $dump->getData()->getData());
+        $this->assertIsString($dump->getData()->getData());
         $this->assertFalse($dump->isStale());
         $this->assertTrue($dump->remove());
 

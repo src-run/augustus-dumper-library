@@ -20,8 +20,6 @@ class TextDumper extends AbstractDumper
 {
     /**
      * @param string $data The input file data
-     *
-     * @return ResultModel
      */
     protected function parseInputData(string $data): ResultModel
     {

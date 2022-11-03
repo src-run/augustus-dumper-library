@@ -28,30 +28,15 @@ abstract class AbstractDumper implements DumperInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var string
-     */
-    protected $input;
+    protected ?string $input = null;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var string
-     */
-    protected $output;
+    protected ?string $output = null;
 
-    /**
-     * @var string
-     */
-    protected $outputBasePath;
+    protected ?string $outputBasePath = null;
 
-    /**
-     * @var null|\DateInterval
-     */
-    protected $lifetime;
+    protected ?\DateInterval $lifetime = null;
 
     /**
      * Construct dumper instance, given a file path and optional lifetime date interval and logger interface.
@@ -68,9 +53,6 @@ abstract class AbstractDumper implements DumperInterface
         $this->setupOutput($file);
     }
 
-    /**
-     * @param string|null $outputBasePath
-     */
     public function setOutputBasePath(string $outputBasePath = null)
     {
         $this->outputBasePath = $outputBasePath;
@@ -79,8 +61,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * Returns true if an input file or output (dumped) has been read and is non-null.
-     *
-     * @return bool
      */
     public function hasData(): bool
     {
@@ -89,8 +69,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * Returns the data originally read from the input file and dumped to the output (dumped) file.
-     *
-     * @return ResultModel
      */
     public function getData(): ResultModel
     {
@@ -99,8 +77,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * Returns true if output (dumped) file is successfully removed.
-     *
-     * @return bool
      */
     public function remove(): bool
     {
@@ -124,8 +100,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * Returns true if an output (dumped) file exists.
-     *
-     * @return bool
      */
     public function isDumped(): bool
     {
@@ -134,8 +108,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * Returns true if output (dumped) file does not exist or is older than the configured lifetime.
-     *
-     * @return bool
      */
     public function isStale(): bool
     {
@@ -144,7 +116,7 @@ abstract class AbstractDumper implements DumperInterface
         }
 
         $nowDateTime = new \DateTime();
-        $outDateDiff = $nowDateTime->diff(new \DateTime('@'.filemtime($this->output)));
+        $outDateDiff = $nowDateTime->diff(new \DateTime('@' . filemtime($this->output)));
 
         return $this->isGreaterThanLifetime($outDateDiff);
     }
@@ -155,8 +127,6 @@ abstract class AbstractDumper implements DumperInterface
      * @throws InvalidInputException  If an error occurs with the input file
      * @throws InvalidOutputException If an error occurs with the output file
      * @throws CompilationException   If dump compilation fails
-     *
-     * @return ResultModel
      */
     public function dump(): ResultModel
     {
@@ -174,8 +144,6 @@ abstract class AbstractDumper implements DumperInterface
      * Parse the input file data to the expected format that should be cached in the output (dumped) file.
      *
      * @param string $data A data string read from the input file
-     *
-     * @return ResultModel
      */
     abstract protected function parseInputData(string $data): ResultModel;
 
@@ -183,8 +151,6 @@ abstract class AbstractDumper implements DumperInterface
      * @throws InvalidInputException
      * @throws InvalidOutputException
      * @throws CompilationException
-     *
-     * @return self
      */
     protected function tryDump(): self
     {
@@ -200,9 +166,6 @@ abstract class AbstractDumper implements DumperInterface
         return $this;
     }
 
-    /**
-     * @return FileLockInterface
-     */
     protected function tryLock(): FileLockInterface
     {
         $lock = FileLock::create($this->output, FileLock::LOCK_EXCLUSIVE | FileLock::LOCK_NON_BLOCKING);
@@ -213,18 +176,15 @@ abstract class AbstractDumper implements DumperInterface
     }
 
     /**
-     * @param ResultModel       $data
-     * @param FileLockInterface $lock
-     *
      * @throws CompilationException
      */
     protected function tryWrite(ResultModel $data, FileLockInterface $lock)
     {
         $return = CallSilencerFactory::create(function () use ($data, $lock) {
-            return fwrite($lock->getResource(), '<?php return '.var_export($data, true).';');
+            return fwrite($lock->getResource(), '<?php return ' . var_export($data, true) . ';');
         }, function ($return) {
             return false !== $return;
-        })->invoke();
+        })->setThrow(true)->invoke();
 
         if (!$return->isValid() || $return->hasError()) {
             $this->logDebug('Could not write dumped output file: {file}', [
@@ -237,8 +197,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * @throws InvalidOutputException
-     *
-     * @return ResultModel
      */
     protected function tryInclude(): ResultModel
     {
@@ -255,8 +213,6 @@ abstract class AbstractDumper implements DumperInterface
 
     /**
      * @throws InvalidInputException
-     *
-     * @return string
      */
     protected function tryRead(): string
     {
@@ -273,17 +229,11 @@ abstract class AbstractDumper implements DumperInterface
         return $return->getReturn();
     }
 
-    /**
-     * @param string $file
-     */
     protected function setupInput(string $file)
     {
         $this->input = $file;
     }
 
-    /**
-     * @param \DateInterval|null $lifetime
-     */
     protected function setupLifetime(\DateInterval $lifetime = null)
     {
         if (!$lifetime) {
@@ -293,9 +243,6 @@ abstract class AbstractDumper implements DumperInterface
         $this->lifetime = $lifetime;
     }
 
-    /**
-     * @param string $file
-     */
     protected function setupOutput(string $file)
     {
         $this->output = vsprintf('%s%s_dumped-%s_%s_%s.php', [
@@ -311,17 +258,12 @@ abstract class AbstractDumper implements DumperInterface
         }
     }
 
-    /**
-     * @param \DateInterval $outputInterval
-     *
-     * @return bool
-     */
     protected function isGreaterThanLifetime(\DateInterval $outputInterval): bool
     {
         $toComparable = function (\DateInterval $interval) {
             $comparable = '';
             foreach (['y', 'm', 'd', 'h', 'i', 's'] as $f) {
-                $comparable .= str_pad((string) $interval->format('%'.$f), 2, '0', STR_PAD_LEFT);
+                $comparable .= str_pad((string) $interval->format('%' . $f), 2, '0', STR_PAD_LEFT);
             }
 
             return (int) $comparable;

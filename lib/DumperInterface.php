@@ -31,48 +31,33 @@ interface DumperInterface extends LoggerAwareInterface
 
     /**
      * Returns true if an input file or output (dumped) has been read and is non-null.
-     *
-     * @return bool
      */
     public function hasData(): bool;
 
     /**
      * Returns the data originally read from the input file and dumped to the output (dumped) file.
-     *
-     * @return ResultModel
      */
     public function getData(): ResultModel;
 
     /**
      * Dump the input file to output (dumped) file, if output does not exist or is stale, and return file data.
-     *
-     * @return ResultModel
      */
     public function dump(): ResultModel;
 
-    /**
-     * @param string|null $outputBasePath
-     */
     public function setOutputBasePath(string $outputBasePath = null);
 
     /**
      * Remove compiled output file.
-     *
-     * @return bool
      */
     public function remove(): bool;
 
     /**
      * Returns true if an output (dumped) file exists.
-     *
-     * @return bool
      */
     public function isDumped(): bool;
 
     /**
      * Returns true if output (dumped) file does not exist or is older than the configured lifetime.
-     *
-     * @return bool
      */
     public function isStale(): bool;
 }

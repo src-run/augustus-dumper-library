@@ -38,7 +38,7 @@ class JsonDumperTest extends AbstractTest
         $this->assertSame(count(json_decode(file_get_contents(self::FIXTURE_VALID_JSON), true)), $dump->getData()->count());
         $this->assertInstanceOf(\ArrayIterator::class, $dump->getData()->getIterator());
         $this->assertInstanceOf(ResultModel::class, $dump->getData());
-        $this->assertInternalType('array', $dump->getData()->getData());
+        $this->assertIsArray($dump->getData()->getData());
         $this->assertFalse($dump->isStale());
         $this->assertTrue($dump->remove());
         $dump->remove();

@@ -39,8 +39,8 @@ class AbstractDumperTest extends AbstractTest
         $lock = FileLock::create(self::FIXTURE_VALID_YAML);
         $dump = new YamlDumper(self::FIXTURE_VALID_YAML);
 
-        $this->expectException(CompilationException::class);
-        $this->expectExceptionMessage('fwrite() expects parameter 1 to be resource');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('fwrite(): Argument #1 ($stream) must be of type resource');
 
         $method = $this->getDumperReflectionMethod('tryWrite');
         $method->invoke($dump, $data, $lock);

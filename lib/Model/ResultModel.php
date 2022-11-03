@@ -26,35 +26,21 @@ class ResultModel implements \Countable, \IteratorAggregate
         $this->data = $data;
     }
 
-    /**
-     * @param array $properties
-     *
-     * @return self
-     */
     public static function __set_state(array $properties): self
     {
         return new static($properties['data'] ?? []);
     }
 
-    /**
-     * @return bool
-     */
     public function isArray(): bool
     {
         return is_array($this->data);
     }
 
-    /**
-     * @return bool
-     */
     public function isString(): bool
     {
         return is_string($this->data);
     }
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         return $this->isArray() ? count($this->data) : mb_strlen($this->data);
@@ -63,9 +49,9 @@ class ResultModel implements \Countable, \IteratorAggregate
     /**
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->isArray() ? $this->data : str_split($this->data));
+        return new \ArrayIterator($this->isArray() ? $this->data : mb_str_split($this->data));
     }
 
     /**

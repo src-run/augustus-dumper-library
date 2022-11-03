@@ -32,11 +32,12 @@ class YamlDumperTest extends AbstractTest
 
         $filePath = $this
             ->getDumperReflectionProperty('output')
-            ->getValue($dump);
+            ->getValue($dump)
+        ;
 
         $this->assertFalse($dump->hasData());
         $this->assertTrue($dump->isStale());
-        $this->assertFileNotExists($filePath);
+        $this->assertFileDoesNotExist($filePath);
         $this->assertSame($data->getData(), $dump->dump()->getData());
         $this->assertTrue($dump->hasData());
         $this->assertTrue($dump->getData()->isArray());
@@ -44,10 +45,10 @@ class YamlDumperTest extends AbstractTest
         $this->assertSame(count(Yaml::parse(file_get_contents(self::FIXTURE_VALID_YAML))), $dump->getData()->count());
         $this->assertInstanceOf(\ArrayIterator::class, $dump->getData()->getIterator());
         $this->assertInstanceOf(ResultModel::class, $dump->getData());
-        $this->assertInternalType('array', $dump->getData()->getData());
+        $this->assertIsArray($dump->getData()->getData());
         $this->assertFileExists($filePath);
         $this->assertTrue($dump->remove());
-        $this->assertFileNotExists($filePath);
+        $this->assertFileDoesNotExist($filePath);
         $this->assertSame($data->getData(), $dump->dump()->getData());
         $this->assertFalse($dump->isStale());
 

@@ -19,12 +19,17 @@ use SR\Dumper\YamlDumper;
  */
 abstract class AbstractTest extends TestCase
 {
-    const FIXTURE_VALID_YAML = __DIR__.'/Fixtures/test-array-valid.yml';
-    const FIXTURE_VALID_JSON = __DIR__.'/Fixtures/test-array-valid.json';
-    const FIXTURE_VALID_TEXT = __DIR__.'/Fixtures/test-string-valid.txt';
-    const FIXTURE_INVALID_FILE = __DIR__.'/Fixtures/test/file/does/not/exist.yml';
-    const FIXTURE_INVALID_YAML = __DIR__.'/Fixtures/test-array-invalid.yml';
-    const FIXTURE_INVALID_JSON = __DIR__.'/Fixtures/test-array-invalid.json';
+    public const FIXTURE_VALID_YAML = __DIR__ . '/Fixtures/test-array-valid.yml';
+
+    public const FIXTURE_VALID_JSON = __DIR__ . '/Fixtures/test-array-valid.json';
+
+    public const FIXTURE_VALID_TEXT = __DIR__ . '/Fixtures/test-string-valid.txt';
+
+    public const FIXTURE_INVALID_FILE = __DIR__ . '/Fixtures/test/file/does/not/exist.yml';
+
+    public const FIXTURE_INVALID_YAML = __DIR__ . '/Fixtures/test-array-invalid.yml';
+
+    public const FIXTURE_INVALID_JSON = __DIR__ . '/Fixtures/test-array-invalid.json';
 
     /**
      * @param string $property
